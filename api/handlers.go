@@ -15,8 +15,9 @@ func init() {
 
 
 func addLink(w http.ResponseWriter, r *http.Request) {
-
+  
 }
+
 func showLinks(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("showing ...")
 }
