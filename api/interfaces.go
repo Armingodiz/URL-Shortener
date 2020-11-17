@@ -1,0 +1,10 @@
+package api
+
+type DataBase interface {
+	SignUp(username, password string) error
+	Login(username, password string) error
+	AddLink(originLink,shortenLink string) error
+	GetLink(shortenLink string) string
+	GetUrls(username string) map[string]string
+	Logout() error
+}
