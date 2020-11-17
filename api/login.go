@@ -1,16 +1,14 @@
 package api
-/*
+
 import (
-	"fmt"
+	//"fmt"
 	uuid "github.com/satori/go.uuid"
-	"html/template"
-	"log"
+	//"html/template"
 	"net/http"
-	"tawesoft.co.uk/go/dialog"
+	//	"tawesoft.co.uk/go/dialog"
 )
 
-
-func loginPage(w http.ResponseWriter, req *http.Request) {
+/*func loginPage(w http.ResponseWriter, req *http.Request) {
 	if checkLog(req) {
 		dialog.Alert("you are already logged in ! ")
 		http.Redirect(w, req, "/", http.StatusSeeOther)
@@ -106,34 +104,16 @@ func logOut(w http.ResponseWriter, req *http.Request) {
 	}
 	http.SetCookie(w, cook)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
-}
+}*/
 
-
-
-
-
-
-
-
-
-func getUser(w http.ResponseWriter, req *http.Request) user {
-	var u user
+func getUser(w http.ResponseWriter, req *http.Request) {
 	cookie, err := req.Cookie("session")
 	if err != nil {
-		sID, _ := uuid.NewV4()
+		sID:= uuid.NewV4()
 		cookie = &http.Cookie{
 			Name:  "session",
 			Value: sID.String(),
 		}
 	}
 	http.SetCookie(w, cookie)
-	return u
 }
-
-func checkLogged(req *http.Request) bool {
-	cook, er := req.Cookie("session")
-	if er != nil {
-		return false
-	}
-	return ok
-}*/

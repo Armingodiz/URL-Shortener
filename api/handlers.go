@@ -15,11 +15,16 @@ func init() {
 }
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
-  // TODO check if there is a user session , print welcom $name user
-	//u := getUser(w, req)
-	err := tpl.ExecuteTemplate(w, "index.gohtml", "Alert")
+	// TODO check if there is a user session , print welcom $name user
+	_, err := r.Cookie("session")
+	var err2 error
 	if err != nil {
-		log.Fatalln(err)
+		err2 = tpl.ExecuteTemplate(w, "index.gohtml", nil)
+	} else {
+		err2 = tpl.ExecuteTemplate(w, "index.gohtml", "USER")
+	}
+	if err2 != nil {
+		log.Fatalln(err2)
 	}
 }
 
@@ -46,14 +51,27 @@ func singUp(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 
 }
-func logout(w http.ResponseWriter, r *http.Request) {
 
+func logout(w http.ResponseWriter, r *http.Request) {
+	_, err := r.Cookie("session")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	cook := &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		MaxAge: -1,
+	}
+	// TODO delete session frome db
+	http.SetCookie(w, cook)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
 func addLink(w http.ResponseWriter, r *http.Request) {
 
 }
 func showLinks(w http.ResponseWriter, r *http.Request) {
-  fmt.Println("showing ...")
+	fmt.Println("showing ...")
 }
 func redirect(w http.ResponseWriter, r *http.Request) {
 
