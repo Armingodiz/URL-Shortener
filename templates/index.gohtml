@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up PAGE</title>
+  </head>
+
+  <body>
+
+    {{if .}}
+      <strong >Hi
+        {{.}}
+        , WELCOME
+      </strong>
+      <form method="POST" id="signup-form" class="signup-form" action="/show">
+        <input type="submit" name="submit" id="submit" class="form-submit submit" value="show my links"/>
+      </form>
+    {{end}}
+
+    <br/>
+    <br/>
+
+    <form method="POST" id="signup-form" class="signup-form" action="/signup">
+      <input type="email" class="form-input" name="email" id="email" placeholder="Email"/>
+      <input type="text" class="form-input" name="password" id="password" placeholder="Password"/>
+      <input type="submit" name="submit" id="submit" class="form-submit submit" value="Sign up"/>
+    </form>
+
+    <br/>
+    <br/>
+
+    <form method="POST" id="signup-form" class="signup-form" action="/login">
+      <input type="email" class="form-input" name="email" id="email" placeholder="Email"/>
+      <input type="text" class="form-input" name="password" id="password" placeholder="Password"/>
+      <input type="submit" name="submit" id="submit" class="form-submit submit" value="   login  "/>
+    </form>
+
+  </body>
+
+</html>

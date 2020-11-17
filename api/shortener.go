@@ -28,7 +28,7 @@ func GetRouter() *mux.Router {
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", mainPage)
-	r.HandleFunc("/singUp", singUp)
+	r.HandleFunc("/signup", singUp)
 	r.HandleFunc("/login", login)
 	r.HandleFunc("/logout", logout)
 	r.HandleFunc("/new", addLink)
