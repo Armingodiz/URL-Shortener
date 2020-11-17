@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
 	"log"
@@ -11,6 +12,8 @@ type DataBase struct {
 	RsDb *redis.Client
 }
 
+///////////////////////////////////////////////////// new redis database :
+
 func GetNewDatabase(port int) *DataBase {
 	addr := "localhost:" + strconv.Itoa(port)
 	redisClient := redis.NewClient(&redis.Options{
@@ -20,31 +23,87 @@ func GetNewDatabase(port int) *DataBase {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	redisClient.Del("sessions")
 	return &DataBase{
 		RsDb: redisClient,
 	}
 }
+
+//////////////////////////////////////////////////// adding session :
+
 func (db *DataBase) AddSession(uuidCode, username string) error {
-	fmt.Println("adding session ...")
+	err := db.RsDb.HSet("sessions", uuidCode, username).Err()
+	if err != nil {
+		return errors.New("ERROR IN ADDING SESSION TO database")
+	}
 	return nil
 }
+
+//////////////////////////////////////////////////// getting username fore session :
+
 func (db *DataBase) GetSessionInfo(uuidCode string) string {
-	return "user"
+	userName, _ := db.RsDb.HGet("sessions", uuidCode).Result()
+	return userName
 }
+
+//////////////////////////////////////////////////// signing up user :
+
 func (db *DataBase) SignUp(username, password string) error {
-	fmt.Println("singning in ...")
-	// TODO check if user already exists
-	// TODO check if there is a session for this user
-	// TODO add user to db
+	// check if user already exists
+	user, _ := db.RsDb.HGet("users", username).Result()
+	if user != "" {
+		return errors.New("USER Alrady exists !")
+	}
+	// add user to database
+	err := db.RsDb.HSet("users", username, password).Err()
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("EROR in adding user to database")
+	}
 	return nil
 }
+
+//////////////////////////////////////////////////////// login user :
+
 func (db *DataBase) Login(username, password string) error {
 	fmt.Println("logging in ...")
-	// TODO check if user exists
-	// TODO check if there is a session for this user
-	// TODO check if password is correct
+	pass, _ := db.RsDb.HGet("users", username).Result()
+	if pass == "" {
+		return errors.New("THIS USER DOES NOT EXIST !")
+	} else if pass != password {
+		fmt.Println(pass)
+		fmt.Println(password)
+		return errors.New("wrong password!")
+	}
+	if sessionExistence(db, username) {
+		return errors.New("LOGGED IN from another device ! ")
+	}
 	return nil
 }
+
+//////////////////////////////////////////////////////  logout user :
+
+func (db *DataBase) Logout(uuidCode string) error {
+	err := db.RsDb.HDel("sessions", uuidCode)
+	if err != nil {
+		return errors.New("error in removing session from database")
+	}
+	return nil
+}
+
+//////////////////////////////////////////////////////// check existence of session :
+
+func sessionExistence(db *DataBase, username string) bool {
+	sessions, _ := db.RsDb.HGetAll("sessions").Result()
+	for _, userN := range sessions {
+		if userN == username {
+			return true
+		}
+	}
+	return false
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func (db *DataBase) AddLink(originLink, shortenLink string) error {
 	return nil
 }
@@ -52,9 +111,5 @@ func (db *DataBase) GetLink(shortenLink string) string {
 	return ""
 }
 func (db *DataBase) GetUrls(username string) map[string]string {
-	return nil
-}
-func (db *DataBase) Logout(uuidCode string) error {
-	// TODO remove session from database
 	return nil
 }
