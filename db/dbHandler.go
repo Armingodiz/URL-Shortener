@@ -23,8 +23,16 @@ func GetNewDatabase(port int) *DataBase {
 		RsDb: redisClient,
 	}
 }
-
+func (db *DataBase) AddSession(uuidCode, username string) error {
+	return nil
+}
+func (db *DataBase) GetSessionInfo(uuidCode string) string {
+	return "user"
+}
 func (db *DataBase) SignUp(username, password string) error {
+	// TODO check if user already exists
+	// TODO check if there is a session for this user
+	// TODO add user to db
 	return nil
 }
 func (db *DataBase) Login(username, password string) error {
@@ -39,6 +47,7 @@ func (db *DataBase) GetLink(shortenLink string) string {
 func (db *DataBase) GetUrls(username string) map[string]string {
 	return nil
 }
-func (db *DataBase) Logout() error {
+func (db *DataBase) Logout(uuidCode string) error {
+	// TODO remove session from database
 	return nil
 }

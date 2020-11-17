@@ -15,13 +15,13 @@ func init() {
 }
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
-	// TODO check if there is a user session , print welcom $name user
-	_, err := r.Cookie("session")
+	cookie, err := r.Cookie("session")
 	var err2 error
-	if err != nil {
+	if err != nil { // check if we have a session cookie
 		err2 = tpl.ExecuteTemplate(w, "index.gohtml", nil)
 	} else {
-		err2 = tpl.ExecuteTemplate(w, "index.gohtml", "USER")
+		userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie
+		err2 = tpl.ExecuteTemplate(w, "index.gohtml", userName)
 	}
 	if err2 != nil {
 		log.Fatalln(err2)
@@ -32,19 +32,22 @@ func singUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		e := r.FormValue("email")
 		p := r.FormValue("password")
-		fmt.Println(e, p)
-		// TODO check if user already exists
-		// TODO check if there is a session for this user
-		// creating and setting session
-		sID := uuid.NewV4()
-		cookie := &http.Cookie{
-			Name:  "session",
-			Value: sID.String(),
+		err := shortener.db.SignUp(e, p)
+		if err != nil {
+      // if user is already exists or there is a session for this user
+      fmt.Println(err)
+		} else {
+			// creating and setting session
+			sID := uuid.NewV4()
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: sID.String(),
+			}
+			http.SetCookie(w, cookie)
+			// adding session to db
+			shortener.db.AddSession(cookie.Value, e)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
-		http.SetCookie(w, cookie)
-		// TODO add session to db
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
 	}
 }
 
@@ -53,16 +56,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("session")
+	// checking if we have a session
+	cookie, err := r.Cookie("session")
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// removing session from db
+	shortener.db.Logout(cookie.Value)
 	cook := &http.Cookie{
 		Name:   "session",
 		Value:  "",
 		MaxAge: -1,
 	}
-	// TODO delete session frome db
 	http.SetCookie(w, cook)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
