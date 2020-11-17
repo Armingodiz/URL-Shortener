@@ -1,9 +1,13 @@
 package api
 
 import (
+	"crypto/md5"
+	"encoding/base64"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"strings"
 )
 
 var tpl *template.Template
@@ -22,13 +26,14 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 		url = "http://" + url
 	}
 	// create shortenned version
-	link := shortenUrl(url)
+	link := r.Host + "/" + shortenUrl(url)
+	fmt.Println(r.Host)
 	cookie, err := r.Cookie("session")
 	userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie
 	go func() {
 		shortener.db.AddLink(url, link, userName)
 	}()
-	err := tpl.ExecuteTemplate(w, "result.gohtml", link)
+	err = tpl.ExecuteTemplate(w, "result.gohtml", link)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -37,10 +42,13 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 func showLinks(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("showing ...")
 }
-func redirect(w http.ResponseWriter, r *http.Request) {
 
+func redirect(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://pkg.go.dev/github.com/go-redis/redis/v8#ClusterClient.HDel", http.StatusSeeOther)
 }
 
 func shortenUrl(url string) string {
-
+	md5 := md5.Sum([]byte(url))
+	hash := strings.ReplaceAll(strings.ReplaceAll(base64.StdEncoding.EncodeToString(md5[:])[:6], "/", "_"), "+", "-")
+	return hash
 }

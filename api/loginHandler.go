@@ -83,7 +83,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
-
 ///////////////////////////////////////////////// logging out user :
 
 func logout(w http.ResponseWriter, r *http.Request) {
