@@ -31,7 +31,7 @@ func GetNewDatabase(port int) *DataBase {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (db *DataBase) AddLink(originLink, shortenLink string) error {
+func (db *DataBase) AddLink(originLink, shortenLink,userName string) error {
 	return nil
 }
 func (db *DataBase) GetLink(shortenLink string) string {
