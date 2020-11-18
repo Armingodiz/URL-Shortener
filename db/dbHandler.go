@@ -1,10 +1,10 @@
 package db
 
 import (
-	//"errors"
+	"errors"
 	"github.com/go-redis/redis"
-	"strconv"
 	"log"
+	"strconv"
 )
 
 type DataBase struct {
@@ -28,14 +28,22 @@ func GetNewDatabase(port int) *DataBase {
 	}
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (db *DataBase) AddLink(originLink, shortenLink,userName string) error {
+func (db *DataBase) AddLink(originLink, shortenLink, userName string) error {
+	err := db.RsDb.HSet(userName, shortenLink, originLink).Err()
+	if err != nil {
+		return errors.New("ERROR IN ADDING SHORTEN LINK TO user  database")
+	}
+	err = db.RsDb.HSet("urls", shortenLink, originLink).Err()
+	if err != nil {
+		return errors.New("ERROR IN ADDING SHORTEN LINK TO database")
+	}
 	return nil
 }
+
 func (db *DataBase) GetLink(shortenLink string) string {
-	return ""
+	url, _ := db.RsDb.HGet("urls", shortenLink).Result()
+	return url
 }
 func (db *DataBase) GetUrls(username string) map[string]string {
 	return nil

@@ -39,11 +39,11 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func showLinks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("showing ...")
-}
 
 func redirect(w http.ResponseWriter, r *http.Request) {
+	url := r.Host + r.URL.String()
+	originalLink := shortener.db.GetLink(url)
+	fmt.Println(originalLink)
 	http.Redirect(w, r, "https://pkg.go.dev/github.com/go-redis/redis/v8#ClusterClient.HDel", http.StatusSeeOther)
 }
 
@@ -51,4 +51,8 @@ func shortenUrl(url string) string {
 	md5 := md5.Sum([]byte(url))
 	hash := strings.ReplaceAll(strings.ReplaceAll(base64.StdEncoding.EncodeToString(md5[:])[:6], "/", "_"), "+", "-")
 	return hash
+}
+
+func showLinks(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("showing ...")
 }

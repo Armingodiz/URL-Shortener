@@ -22,6 +22,8 @@ func main() {
 			time.Sleep(5 * time.Second)
 			sessions, _ := db.RsDb.HGetAll("sessions").Result()
 			fmt.Println(sessions)
+			urls, _ := db.RsDb.HGetAll("urls").Result()
+			fmt.Println(urls)
 		}
 	}()
 	log.Fatal(http.ListenAndServe(":8080", api.GetRouter()))
