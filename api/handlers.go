@@ -15,6 +15,8 @@ func init() {
 	tpl = template.Must(template.ParseGlob("./templates/*.gohtml"))
 }
 
+//////////////////////////////////////////////////////////// add new shorten link :
+
 func addLink(w http.ResponseWriter, r *http.Request) {
 	var err error
 	url := r.FormValue("url")
@@ -37,6 +39,8 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////// redirect shorten link to origin address :
+
 func redirect(w http.ResponseWriter, r *http.Request) {
 	url := r.Host + r.URL.String()
 	originalLink := shortener.db.GetLink(url)
@@ -46,11 +50,15 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+////////////////////////////////////////////////////////////////////////// func to shorten the link :
+
 func shortenUrl(url string) string {
 	md5 := md5.Sum([]byte(url))
 	hash := strings.ReplaceAll(strings.ReplaceAll(base64.StdEncoding.EncodeToString(md5[:])[:6], "/", "_"), "+", "-")
 	return hash
 }
+
+///////////////////////////////////////////////////////////////////// showing all urls for each user :
 
 func showLinks(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session")
