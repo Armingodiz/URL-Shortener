@@ -26,7 +26,7 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 		url = "http://" + url
 	}
 	// create shortenned version
-	link := r.Host + "/" + shortenUrl(url)
+	link := r.Host + "/$/" + shortenUrl(url)
 	fmt.Println(r.Host)
 	cookie, err := r.Cookie("session")
 	userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie

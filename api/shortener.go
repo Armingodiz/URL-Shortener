@@ -33,6 +33,6 @@ func newRouter() *mux.Router {
 	r.HandleFunc("/logout", logout)
 	r.HandleFunc("/new", addLink)
 	r.HandleFunc("/show", showLinks)
-	r.HandleFunc("/$", redirect)
+	r.HandleFunc("/$/{type}", redirect)
 	return r
 }
