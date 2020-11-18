@@ -28,7 +28,8 @@ func GetNewDatabase(port int) *DataBase {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////// add shorten link and its original version to database
+
 func (db *DataBase) AddLink(originLink, shortenLink, userName string) error {
 	err := db.RsDb.HSet(userName, shortenLink, originLink).Err()
 	if err != nil {
@@ -41,10 +42,16 @@ func (db *DataBase) AddLink(originLink, shortenLink, userName string) error {
 	return nil
 }
 
+///////////////////////////////////////////////////////////////// get original link from database :
+
 func (db *DataBase) GetLink(shortenLink string) string {
 	url, _ := db.RsDb.HGet("urls", shortenLink).Result()
 	return url
 }
+
+////////////////////////////////////////////////////////////////////// get all urls that each user have :
+
 func (db *DataBase) GetUrls(username string) map[string]string {
-	return nil
+	urls, _ := db.RsDb.HGetAll(username).Result()
+	return urls
 }

@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/md5"
 	"encoding/base64"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -27,7 +26,6 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 	}
 	// create shortenned version
 	link := r.Host + "/$/" + shortenUrl(url)
-	fmt.Println(r.Host)
 	cookie, err := r.Cookie("session")
 	userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie
 	go func() {
@@ -55,5 +53,11 @@ func shortenUrl(url string) string {
 }
 
 func showLinks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("showing ...")
+	cookie, err := r.Cookie("session")
+	userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie
+	urls := shortener.db.GetUrls(userName)
+	err = tpl.ExecuteTemplate(w, "result.gohtml", urls)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
