@@ -39,12 +39,13 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func redirect(w http.ResponseWriter, r *http.Request) {
 	url := r.Host + r.URL.String()
 	originalLink := shortener.db.GetLink(url)
-	fmt.Println(originalLink)
-	http.Redirect(w, r, "https://pkg.go.dev/github.com/go-redis/redis/v8#ClusterClient.HDel", http.StatusSeeOther)
+	if originalLink != "" {
+		http.Redirect(w, r, originalLink, http.StatusSeeOther)
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func shortenUrl(url string) string {
