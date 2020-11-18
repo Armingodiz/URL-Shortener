@@ -23,7 +23,7 @@ func addLink(w http.ResponseWriter, r *http.Request) {
 	// remove www.
 	url = strings.Replace(url, "www.", "", 1)
 	// adding http to url if it doesn't contains it
-	if !strings.Contains(url, "http://") {
+	if !strings.Contains(url, "http://") && !strings.Contains(url, "https://") {
 		url = "http://" + url
 	}
 	// create shortenned version
@@ -64,7 +64,7 @@ func showLinks(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session")
 	userName := shortener.db.GetSessionInfo(cookie.Value) // user name which blongs to this session cookie
 	urls := shortener.db.GetUrls(userName)
-	err = tpl.ExecuteTemplate(w, "result.gohtml", urls)
+	err = tpl.ExecuteTemplate(w, "results.gohtml", urls)
 	if err != nil {
 		log.Fatalln(err)
 	}

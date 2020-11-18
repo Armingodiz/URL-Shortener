@@ -16,10 +16,14 @@
       </strong>
       <br/>
       <br/>
+      {{range $index, $element := .}}
+        <p>{{$element}}</p>
         <a href={{.}}>
-          {{.}}
+          {{$index}}
         </a>
         <br/>
+        <br/>
+      {{end}}
 
     {{end}}
   </body>
